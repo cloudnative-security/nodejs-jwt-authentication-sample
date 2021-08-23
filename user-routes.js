@@ -12,6 +12,12 @@ var users = [{
   password: 'gonto'
 }];
 
+var quotes = [{
+  quoteId: "9780007195909",
+  postcode: "SW1A 2AA",
+  dateOfBirth: "06-19-1964"
+}]
+
 function createIdToken(user) {
   return jwt.sign(_.omit(user, 'password'), config.secret, { expiresIn: 60*60*5 });
 }
@@ -109,5 +115,66 @@ app.post('/sessions/create', function(req, res) {
   res.status(201).send({
     id_token: createIdToken(user),
     access_token: createAccessToken()
+  });
+});
+
+// mod
+function quoteExists() {
+  return true;
+}
+
+function getQuoteScheme(req) {
+  
+  var quoteId;
+  var dateOfBirth;
+  var postcode
+  var quotes = {};
+
+  var body = req.body
+  // The POST contains quoteId, postcode and dateOfBirth
+  if(body.quoteId && body.dateOfBirth && body.postcode) {
+    return {
+      quoteId: body.quoteId,
+      dateOfBirth: body.dateOfBirth,
+      postcode: body.postcode,
+      quoteExists: quoteExists()
+    }
+  }
+
+  return {
+    quoteId: "",
+    dateOfBirth: "",
+    postcode: "",
+    quoteExists: false
+  }
+}
+
+
+app.post('/quotes', function(req, res) {
+  
+  var quoteScheme = getQuoteScheme(req);  
+
+  if (!quoteScheme.quoteId || !quoteScheme.dateOfBirth || !quoteScheme.postcode) {
+    console.log(quoteScheme)
+    return res.status(400).send("You must send the quoteId, dateOfBirth and the postcode");
+  }
+
+  if (!quoteScheme.quoteExists) {
+   return res.status(400).send("Quote does not exists!");
+  }
+
+  var profile = _.pick(req.body, 'quoteId', 'dateOfBirth', 'postcode');
+
+  quotes.push(profile);
+  console.log(quotes)
+
+  res.status(201).send({
+    access_token: createAccessToken()
+  });
+});
+
+app.get('/motor-quote-service', function(req, res) {
+  res.status(201).send({
+    status: 'under construction'
   });
 });

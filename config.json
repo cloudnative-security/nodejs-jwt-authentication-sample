@@ -1,5 +1,5 @@
 {
-  "secret": "ngEurope rocks!",
-  "audience": "nodejs-jwt-auth",
-  "issuer": "https://gonto.com"
+  "secret": "hardestSecretohack!",
+  "audience": "Motor Quote Service",
+  "issuer": "ClickThrough JWT"
 }
